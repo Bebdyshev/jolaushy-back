@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from auth_utils import hash_password, verify_password, create_access_token, verify_access_token
 from config import get_db
-from schemas.models import *
+from schemas.models import UserInDB, Token
 from datetime import timedelta
 import traceback
 import logging
@@ -19,14 +19,14 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 # Define missing Pydantic models
 class UserLogin(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 class CreateUser(BaseModel):
     name: str
-    email: EmailStr
+    email: str
     password: str
-    type: str
+    type: str = "user"
 
 @router.post("/login", response_model=Token)
 def login(user: UserLogin, db: Session = Depends(get_db)):

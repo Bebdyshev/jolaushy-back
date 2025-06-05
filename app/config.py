@@ -1,9 +1,9 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-from schemas.models import Base
 import os
 from dotenv import load_dotenv
 from typing import Generator
+from base import Base
 
 load_dotenv()
 
@@ -20,4 +20,10 @@ def get_db() -> Generator:
 
 def init_db():
     print("Initializing the database...")
+    Base.metadata.create_all(bind=engine)
+
+def reset_db():
+    print("Dropping all tables...")
+    Base.metadata.drop_all(bind=engine)
+    print("Recreating all tables...")
     Base.metadata.create_all(bind=engine)
