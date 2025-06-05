@@ -1,0 +1,23 @@
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
+from schemas.models import Base
+import os
+from dotenv import load_dotenv
+from typing import Generator
+
+load_dotenv()
+
+POSTGRES_URL = os.getenv("POSTGRES_URL")
+engine = create_engine(POSTGRES_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def get_db() -> Generator:
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+def init_db():
+    print("Initializing the database...")
+    Base.metadata.create_all(bind=engine)
