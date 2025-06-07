@@ -3,13 +3,16 @@ from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
 from typing import Generator
-from base import Base
+from schemas.models import Base
 
 load_dotenv()
 
 POSTGRES_URL = os.getenv("POSTGRES_URL")
+
 engine = create_engine(POSTGRES_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+print("Connecting to:", POSTGRES_URL)
 
 def get_db() -> Generator:
     db = SessionLocal()

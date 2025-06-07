@@ -142,3 +142,20 @@ class UserPreference(Base):
 class Token(BaseModel):
     access_token: str
     type: str
+
+class ChatConversation(Base):
+    __tablename__ = "chat_conversations"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    last_updated = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    messages = relationship("ChatMessage", back_populates="conversation", cascade="all, delete-orphan")
+
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+    id = Column(Integer, primary_key=True, index=True)
+    conversation_id = Column(Integer, ForeignKey("chat_conversations.id"))
+    role = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    conversation = relationship("ChatConversation", back_populates="messages")

@@ -2,10 +2,10 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from config import init_db
 from routes.auth import router as auth_router
-from routes.roadmap import router as roadmap_router
+from routes.chat import router as chat_router
 from dotenv import load_dotenv
-from config import engine
 from sqlalchemy import text
+from config import get_db
 
 load_dotenv()
 
@@ -22,14 +22,19 @@ app.add_middleware(
 init_db()
 
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
-app.include_router(roadmap_router, prefix="/roadmap", tags=["Roadmap"])
+app.include_router(chat_router, prefix="/chat", tags=["Chat"])
+
+@app.get("/")
+def root():
+    return {"message": "Hello World"}
 
 @app.get("/health")
-def health_check():
+def health():
     try:
-        with engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
-        db_status = "ok"
+        db = next(get_db())
+        db.execute(text("SELECT 1"))
+        db.commit()
+        return {"db": "Healthy"}
     except Exception as e:
-        db_status = f"error: {str(e)}"
-    return {"server": "ok", "db": db_status} 
+        raise HTTPException(status_code=500, detail=str(e))
+
