@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from sqlalchemy import text
 from config import get_db
 
+
 load_dotenv()
 
 app = FastAPI()
@@ -37,3 +38,4 @@ def health():
         return {"db": "Healthy"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
