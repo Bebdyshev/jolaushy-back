@@ -6,6 +6,7 @@ def find_activities(db: Session, roadmap_id: int, destination: str, interests: l
     Finds activities based on user interests and saves them to the database.
     This is a mock tool.
     """
+    print(f"[TOOL] find_activities called with: roadmap_id={roadmap_id}, destination={destination}, interests={interests}")
     try:
         for interest in interests:
             activity = Place(

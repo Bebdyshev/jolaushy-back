@@ -7,6 +7,7 @@ def find_tickets(db: Session, roadmap_id: int, destination: str, start_date: str
     Finds flight tickets for the given destination and dates and saves them to the database.
     This is a mock tool and does not call a real API.
     """
+    print(f"[TOOL] find_tickets called with: roadmap_id={roadmap_id}, destination={destination}, start_date={start_date}, end_date={end_date}")
     try:
         # Create dummy tickets
         ticket_to = Ticket(

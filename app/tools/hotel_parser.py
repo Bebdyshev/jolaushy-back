@@ -7,6 +7,7 @@ def find_hotels(db: Session, roadmap_id: int, destination: str, check_in_date: s
     Finds a hotel based on user preference and saves it to the database.
     This is a mock tool.
     """
+    print(f"[TOOL] find_hotels called with: roadmap_id={roadmap_id}, destination={destination}, check_in_date={check_in_date}, check_out_date={check_out_date}, preference={preference}")
     try:
         hotel_name = f"{preference.capitalize()} Hotel in {destination}"
         

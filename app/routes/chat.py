@@ -69,7 +69,7 @@ async def chat(
         toolbelt = TravelToolBelt(db=db, roadmap_id=roadmap.id)
         
         # Get response from the agent
-        agent_response = await agent.chat(agent_request, toolbelt)
+        agent_response = await agent.chat(agent_request, db)
         
         # Add assistant's response to conversation history
         conversation_manager.add_message(db, user, conversation_id, "assistant", agent_response.response)
