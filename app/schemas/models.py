@@ -6,6 +6,28 @@ from sqlalchemy.orm import relationship
 from datetime import datetime, date, time
 from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
+
+# Pydantic Schemas for API responses
+class ChatMessageSchema(BaseModel):
+    id: int
+    role: str
+    content: str
+    timestamp: datetime
+
+    class Config:
+        from_attributes = True
+
+class ChatConversationSchema(BaseModel):
+    id: uuid.UUID
+    user_id: int
+    created_at: datetime
+    last_updated: datetime
+    messages: List[ChatMessageSchema] = []
+
+    class Config:
+        from_attributes = True
 
 Base = declarative_base()
 
@@ -145,17 +167,23 @@ class Token(BaseModel):
 
 class ChatConversation(Base):
     __tablename__ = "chat_conversations"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     last_updated = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     messages = relationship("ChatMessage", back_populates="conversation", cascade="all, delete-orphan")
 
+    class Config:
+        from_attributes = True
+
 class ChatMessage(Base):
     __tablename__ = "chat_messages"
     id = Column(Integer, primary_key=True, index=True)
-    conversation_id = Column(Integer, ForeignKey("chat_conversations.id"))
+    conversation_id = Column(UUID(as_uuid=True), ForeignKey("chat_conversations.id"), nullable=False)
     role = Column(String, nullable=False)
     content = Column(Text, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
     conversation = relationship("ChatConversation", back_populates="messages")
+
+    class Config:
+        from_attributes = True
