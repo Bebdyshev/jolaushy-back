@@ -17,6 +17,7 @@ class UserChatRequest(BaseModel):
 class ChatApiResponse(BaseModel):
     response: str
     conversation_id: str
+    tool_output: Optional[List[dict]]
 
 router = APIRouter()
 agent = AIAgent()
@@ -74,7 +75,7 @@ async def chat(
         # Add assistant's response to conversation history
         conversation_manager.add_message(db, user, conversation_id, "assistant", agent_response.response)
         
-        return ChatApiResponse(response=agent_response.response, conversation_id=conversation_id)
+        return ChatApiResponse(response=agent_response.response, conversation_id=conversation_id, tool_output=agent_response.tool_output)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
