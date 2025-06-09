@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from schemas.models import Ticket, RoadmapInDB
 from datetime import datetime, date
-from serpapi import GoogleSearch
 import os
 
 def find_tickets(db: Session, roadmap_id: int, departure_id: str, destination_id: str, start_date: str, end_date: str) -> str:
