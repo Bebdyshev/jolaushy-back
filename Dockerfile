@@ -11,6 +11,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project files
 COPY . .
 
+# Set working directory to src for Python imports
+WORKDIR /app/src
+
 # Expose port
 EXPOSE 8080
 

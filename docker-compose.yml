@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    volumes:
+      - ./src:/app/src
+    command: uvicorn app:app --host 0.0.0.0 --port 8080 --reload
+
+  celery_worker:
+    build: .
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    volumes:
+      - ./src:/app/src
+    command: celery -A celery_app worker --loglevel=info
+
+  celery_beat:
+    build: .
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    volumes:
+      - ./src:/app/src
+    command: celery -A celery_app beat --loglevel=info
+
+volumes:
+  redis_data: 

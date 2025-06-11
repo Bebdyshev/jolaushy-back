@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from config import init_db
+from config import init_db, redis_client
 from routes.auth import router as auth_router
 from routes.chat import router as chat_router
+from routes.tasks import router as tasks_router
 from dotenv import load_dotenv
 from sqlalchemy import text
 from config import get_db
@@ -24,6 +25,7 @@ init_db()
 
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
 app.include_router(chat_router, prefix="/chat", tags=["Chat"])
+app.include_router(tasks_router, prefix="/tasks", tags=["Tasks"])
 
 @app.get("/")
 def root():
@@ -35,7 +37,11 @@ def health():
         db = next(get_db())
         db.execute(text("SELECT 1"))
         db.commit()
-        return {"db": "Healthy"}
+        
+        # Test Redis connection
+        redis_client.ping()
+        
+        return {"db": "Healthy", "redis": "Healthy"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

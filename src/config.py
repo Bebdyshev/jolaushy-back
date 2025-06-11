@@ -4,13 +4,19 @@ import os
 from dotenv import load_dotenv
 from typing import Generator
 from schemas.models import Base
+import redis
 
 load_dotenv()
 
 POSTGRES_URL = os.getenv("POSTGRES_URL")
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
+# Database setup
 engine = create_engine(POSTGRES_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Redis setup
+redis_client = redis.from_url(REDIS_URL, decode_responses=True)
 
 print("Connecting to:", POSTGRES_URL)
 
