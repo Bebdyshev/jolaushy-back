@@ -9,14 +9,27 @@ services:
       - redis_data:/data
     command: redis-server --appendonly yes
 
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=jolaushy
+      - POSTGRES_PASSWORD=jolaushy
+      - POSTGRES_DB=jolaushy
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   app:
     build: .
     ports:
       - "8080:8080"
     environment:
       - REDIS_URL=redis://redis:6379/0
+      - POSTGRES_URL=postgresql+psycopg2://jolaushy:jolaushy@postgres:5432/jolaushy
     depends_on:
       - redis
+      - postgres
     volumes:
       - ./src:/app/src
     command: uvicorn app:app --host 0.0.0.0 --port 8080 --reload
@@ -25,8 +38,10 @@ services:
     build: .
     environment:
       - REDIS_URL=redis://redis:6379/0
+      - POSTGRES_URL=postgresql+psycopg2://jolaushy:jolaushy@postgres:5432/jolaushy
     depends_on:
       - redis
+      - postgres
     volumes:
       - ./src:/app/src
     command: celery -A celery_app worker --loglevel=info
@@ -35,11 +50,14 @@ services:
     build: .
     environment:
       - REDIS_URL=redis://redis:6379/0
+      - POSTGRES_URL=postgresql+psycopg2://jolaushy:jolaushy@postgres:5432/jolaushy
     depends_on:
       - redis
+      - postgres
     volumes:
       - ./src:/app/src
     command: celery -A celery_app beat --loglevel=info
 
 volumes:
-  redis_data: 
+  redis_data:
+  postgres_data: 
