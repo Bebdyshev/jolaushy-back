@@ -27,6 +27,7 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379/0
       - POSTGRES_URL=postgresql+psycopg2://jolaushy:jolaushy@postgres:5432/jolaushy
+      - GROQ_API_KEY=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
     depends_on:
       - redis
       - postgres
@@ -39,6 +40,7 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379/0
       - POSTGRES_URL=postgresql+psycopg2://jolaushy:jolaushy@postgres:5432/jolaushy
+      - GROQ_API_KEY=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
     depends_on:
       - redis
       - postgres
@@ -51,6 +53,7 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379/0
       - POSTGRES_URL=postgresql+psycopg2://jolaushy:jolaushy@postgres:5432/jolaushy
+      - GROQ_API_KEY=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
     depends_on:
       - redis
       - postgres
